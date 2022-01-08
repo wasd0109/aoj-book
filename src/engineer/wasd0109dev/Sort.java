@@ -1,6 +1,9 @@
 package engineer.wasd0109dev;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Sort {
     public static void insertionSort(int[] numbers) {
@@ -57,14 +60,14 @@ public class Sort {
     }
 
 
-
     public static void printArray(int[] numbers) {
         StringBuilder outputStr = new StringBuilder();
         for (int i = 0; i < numbers.length; i++) {
             if (i == 0) {
                 outputStr.append(numbers[i]);
             } else {
-                outputStr.append(" " + numbers[i]);
+                outputStr.append(" ");
+                outputStr.append(numbers[i]);
             }
 
         }
@@ -78,7 +81,8 @@ public class Sort {
             if (i == 0) {
                 outputStr.append(items[i]);
             } else {
-                outputStr.append(" " + items[i]);
+                outputStr.append(" ");
+                outputStr.append(items[i]);
             }
 
         }
@@ -155,5 +159,54 @@ public class Sort {
     public static int getValue(String input) {
         return Character.getNumericValue(input.charAt(1));
     }
+
+    public static void insertionSort(int[] numbers, int length, int gap) {
+        for (int i = gap; i < length; i++) {
+            int currentValue = numbers[i];
+            int index = i - gap;
+            while (index >= 0 && numbers[index] > currentValue) {
+                numbers[index + gap] = numbers[index];
+                index = index - gap;
+
+            }
+            numbers[index + gap] = currentValue;
+        }
+    }
+
+    public static void shellSort(int[] numbers, int length) {
+        List<Integer> gaps = new ArrayList<>();
+        for (int i = 1; ; ) {
+            if (i > length) {
+                break;
+            }
+            gaps.add(i);
+            i = 3 * i + 1;
+        }
+        Collections.reverse(gaps);
+        for (Integer gap : gaps) {
+            insertionSort(numbers, length, gap);
+        }
+        System.out.println(gaps.size());
+        printArray(gaps);
+
+        for (int number : numbers) {
+            System.out.println(number);
+        }
+    }
+
+    public static void printArray(List<Integer> numbers) {
+        StringBuilder outputStr = new StringBuilder();
+        for (int i = 0; i < numbers.size(); i++) {
+            if (i == 0) {
+                outputStr.append(numbers.get(i));
+            } else {
+                outputStr.append(" ");
+                outputStr.append(numbers.get(i));
+            }
+
+        }
+        System.out.println(outputStr);
+    }
+
 
 }

@@ -1,86 +1,69 @@
 package engineer.wasd0109dev;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
-    public static int count = 0;
-
     public static void main(String[] args) {
+        class Stack {
+            final String[] stack;
+            int top = 0;
+
+            public Stack() {
+                this.stack = new String[200];
+
+            }
+
+            public void push(String ch) {
+                top++;
+                this.stack[top] = ch;
+            }
+
+            public String pop() {
+                String element = this.stack[top];
+                top--;
+                return element;
+            }
+
+
+        }
         Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int[] numbers = new int[n];
-        int counter = 0;
-        while (counter < n) {
-            numbers[counter] = scanner.nextInt();
-            counter++;
-        }
-
-        shellSort(numbers, numbers.length);
-    }
-
-    public static void insertionSort(int[] numbers, int length, int gap) {
-        for (int i = gap; i < length; i++) {
-            int currentValue = numbers[i];
-            int index = i - gap;
-            while (index >= 0 && numbers[index] > currentValue) {
-                numbers[index + gap] = numbers[index];
-                index = index - gap;
-                count++;
-            }
-            numbers[index + gap] = currentValue;
-        }
-    }
-
-    public static void shellSort(int[] numbers, int length) {
-        List<Integer> gaps = new ArrayList<>();
-        for (int i = 1; ; ) {
-            if (i > length) {
-                break;
-            }
-            gaps.add(i);
-            i = 3 * i + 1;
-        }
-        Collections.reverse(gaps);
-        for (int i = 0; i < gaps.size(); i++) {
-            insertionSort(numbers, length, gaps.get(i));
-        }
-        System.out.println(gaps.size());
-        printArray(gaps);
-        System.out.println(count);
-        for (int number : numbers) {
-            System.out.println(number);
-        }
-    }
-
-    public static void printArray(List<Integer> numbers) {
-        StringBuilder outputStr = new StringBuilder();
-        for (int i = 0; i < numbers.size(); i++) {
-            if (i == 0) {
-                outputStr.append(numbers.get(i));
+        Stack stack = new Stack();
+        while (scanner.hasNext()) {
+            String current = scanner.next();
+            boolean isOperands = isOperator(current);
+            if (!isOperands) {
+                stack.push(current);
             } else {
-                outputStr.append(" " + numbers.get(i));
+                int secondOperands = Integer.parseInt(stack.pop());
+                int firstOperands = Integer.parseInt(stack.pop());
+                int results;
+                char operator = current.charAt(0);
+                switch (operator) {
+                    case '+':
+                        results = firstOperands + secondOperands;
+                        break;
+                    case '-':
+                        results = firstOperands - secondOperands;
+                        break;
+                    case '*':
+                        results = firstOperands * secondOperands;
+                        break;
+                    case '/':
+                        results = firstOperands / secondOperands;
+                        break;
+                    default:
+                        throw new IllegalArgumentException();
+                }
+                stack.push(Integer.toString(results));
             }
-
         }
-        System.out.println(outputStr);
+        System.out.println(stack.pop());
     }
 
-
-    public static void printArray(int[] numbers) {
-        StringBuilder outputStr = new StringBuilder();
-        for (int i = 0; i < numbers.length; i++) {
-            if (i == 0) {
-                outputStr.append(numbers[i]);
-            } else {
-                outputStr.append(" " + numbers[i]);
-            }
-
-        }
-        System.out.println(outputStr);
+    public static boolean isOperator(String str) {
+        char operator = str.charAt(0);
+        return operator == '+' || operator == '-' || operator == '*' || operator == '/';
     }
 
 }
