@@ -1,7 +1,5 @@
 package engineer.wasd0109dev;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -42,26 +40,41 @@ public class Main {
 
         }
         class Queue {
-            final List<Program> programQueues;
+            final Program[] programQueues;
+            int head;
+            int tail;
 
             public Queue(int n) {
-                this.programQueues = new ArrayList<>();
+                this.programQueues = new Program[n + 10];
+                this.head = 0;
+                this.tail = 0;
             }
 
             public boolean isEmpty() {
-                return this.programQueues.isEmpty();
+                return this.head == this.tail;
             }
 
-            public Program shift() {
-                return this.programQueues.remove(0);
+            public Program dequeue() {
+                Program p = this.programQueues[head];
+                if (head + 1 == this.programQueues.length) {
+                    head = 0;
+                } else {
+                    head++;
+                }
+                return p;
             }
 
-            public void push(Program p) {
-                this.programQueues.add(p);
+            public void enqueue(Program p) {
+                this.programQueues[tail] = p;
+                if (tail + 1 == this.programQueues.length) {
+                    tail = 0;
+                } else {
+                    tail++;
+                }
             }
 
             public int getLength() {
-                return this.programQueues.size();
+                return this.tail - this.head;
             }
         }
         Scanner scanner = new Scanner(System.in);
@@ -73,11 +86,11 @@ public class Main {
             String pName = scanner.next();
             int pTime = scanner.nextInt();
             Program p = new Program(pTime, pName);
-            programQueues.push(p);
+            programQueues.enqueue(p);
         }
         int timer = 0;
         while (!programQueues.isEmpty()) {
-            Program currentP = programQueues.shift();
+            Program currentP = programQueues.dequeue();
             int remainingProcessTime = currentP.getProcessTime();
             boolean isCompleted = currentP.process(maxProcessTime);
             if (isCompleted) {
@@ -85,7 +98,7 @@ public class Main {
                 System.out.println(currentP.name + " " + timer);
             } else {
                 timer += maxProcessTime;
-                programQueues.push(currentP);
+                programQueues.enqueue(currentP);
             }
         }
     }
