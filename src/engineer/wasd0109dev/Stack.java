@@ -9,6 +9,7 @@ public class Stack {
 
     }
 
+
     public void push(String ch) {
         top++;
         this.stack[top] = ch;

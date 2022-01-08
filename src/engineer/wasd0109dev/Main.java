@@ -1,69 +1,94 @@
 package engineer.wasd0109dev;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        class Stack {
-            final String[] stack;
-            int top = 0;
+        class Program {
+            int processTime;
+            final String name;
+            boolean completed = false;
 
-            public Stack() {
-                this.stack = new String[200];
-
+            public boolean isCompleted() {
+                return completed;
             }
 
-            public void push(String ch) {
-                top++;
-                this.stack[top] = ch;
+            public Program(int processTime, String name) {
+                this.processTime = processTime;
+                this.name = name;
             }
 
-            public String pop() {
-                String element = this.stack[top];
-                top--;
-                return element;
+            public int getProcessTime() {
+                return processTime;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public boolean process(int maxProcessTime) {
+                if (this.processTime - maxProcessTime <= 0) {
+                    this.processTime = 0;
+                    this.completed = true;
+                    return true;
+                }
+                this.processTime -= maxProcessTime;
+                return false;
             }
 
 
+        }
+        class Queue {
+            final List<Program> programQueues;
+
+            public Queue(int n) {
+                this.programQueues = new ArrayList<>();
+            }
+
+            public boolean isEmpty() {
+                return this.programQueues.isEmpty();
+            }
+
+            public Program shift() {
+                return this.programQueues.remove(0);
+            }
+
+            public void push(Program p) {
+                this.programQueues.add(p);
+            }
+
+            public int getLength() {
+                return this.programQueues.size();
+            }
         }
         Scanner scanner = new Scanner(System.in);
-        Stack stack = new Stack();
-        while (scanner.hasNext()) {
-            String current = scanner.next();
-            boolean isOperands = isOperator(current);
-            if (!isOperands) {
-                stack.push(current);
+        int n = scanner.nextInt();
+        int maxProcessTime = scanner.nextInt();
+
+        Queue programQueues = new Queue(n);
+        while (programQueues.getLength() < n) {
+            String pName = scanner.next();
+            int pTime = scanner.nextInt();
+            Program p = new Program(pTime, pName);
+            programQueues.push(p);
+        }
+        int timer = 0;
+        while (!programQueues.isEmpty()) {
+            Program currentP = programQueues.shift();
+            int remainingProcessTime = currentP.getProcessTime();
+            boolean isCompleted = currentP.process(maxProcessTime);
+            if (isCompleted) {
+                timer += remainingProcessTime;
+                System.out.println(currentP.name + " " + timer);
             } else {
-                int secondOperands = Integer.parseInt(stack.pop());
-                int firstOperands = Integer.parseInt(stack.pop());
-                int results;
-                char operator = current.charAt(0);
-                switch (operator) {
-                    case '+':
-                        results = firstOperands + secondOperands;
-                        break;
-                    case '-':
-                        results = firstOperands - secondOperands;
-                        break;
-                    case '*':
-                        results = firstOperands * secondOperands;
-                        break;
-                    case '/':
-                        results = firstOperands / secondOperands;
-                        break;
-                    default:
-                        throw new IllegalArgumentException();
-                }
-                stack.push(Integer.toString(results));
+                timer += maxProcessTime;
+                programQueues.push(currentP);
             }
         }
-        System.out.println(stack.pop());
     }
 
-    public static boolean isOperator(String str) {
-        char operator = str.charAt(0);
-        return operator == '+' || operator == '-' || operator == '*' || operator == '/';
-    }
 
 }
