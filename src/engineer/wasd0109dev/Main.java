@@ -1,107 +1,65 @@
 package engineer.wasd0109dev;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-
     public static void main(String[] args) {
-        class Program {
-            int processTime;
-            final String name;
-            boolean completed = false;
-
-            public boolean isCompleted() {
-                return completed;
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            int n = Integer.parseInt(br.readLine());
+            String sInput = br.readLine();
+            int q = Integer.parseInt(br.readLine());
+            String tInput = br.readLine();
+            int[] s = new int[n + 1];
+            String[] sInputs = sInput.split(" ");
+            int[] t = new int[q];
+            String[] tInputs = tInput.split(" ");
+            for (int i = 0; i < sInputs.length; i++) {
+                s[i] = Integer.parseInt(sInputs[i]);
+            }
+            for (int i = 0; i < tInputs.length; i++) {
+                t[i] = Integer.parseInt(tInputs[i]);
             }
 
-            public Program(int processTime, String name) {
-                this.processTime = processTime;
-                this.name = name;
-            }
-
-            public int getProcessTime() {
-                return processTime;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public boolean process(int maxProcessTime) {
-                if (this.processTime - maxProcessTime <= 0) {
-                    this.processTime = 0;
-                    this.completed = true;
-                    return true;
-                }
-                this.processTime -= maxProcessTime;
-                return false;
-            }
-
-
-        }
-        class Queue {
-            final Program[] programQueues;
-            int head;
-            int tail;
-
-            public Queue(int n) {
-                this.programQueues = new Program[n + 10];
-                this.head = 0;
-                this.tail = 0;
-            }
-
-            public boolean isEmpty() {
-                return this.head == this.tail;
-            }
-
-            public Program dequeue() {
-                Program p = this.programQueues[head];
-                if (head + 1 == this.programQueues.length) {
-                    head = 0;
-                } else {
-                    head++;
-                }
-                return p;
-            }
-
-            public void enqueue(Program p) {
-                this.programQueues[tail] = p;
-                if (tail + 1 == this.programQueues.length) {
-                    tail = 0;
-                } else {
-                    tail++;
+            int count = 0;
+            for (int target : t) {
+                if (binarySearch(s, target)) {
+                    count++;
                 }
             }
+            System.out.println(count);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            public int getLength() {
-                return this.tail - this.head;
-            }
-        }
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int maxProcessTime = scanner.nextInt();
-
-        Queue programQueues = new Queue(n);
-        while (programQueues.getLength() < n) {
-            String pName = scanner.next();
-            int pTime = scanner.nextInt();
-            Program p = new Program(pTime, pName);
-            programQueues.enqueue(p);
-        }
-        int timer = 0;
-        while (!programQueues.isEmpty()) {
-            Program currentP = programQueues.dequeue();
-            int remainingProcessTime = currentP.getProcessTime();
-            boolean isCompleted = currentP.process(maxProcessTime);
-            if (isCompleted) {
-                timer += remainingProcessTime;
-                System.out.println(currentP.name + " " + timer);
-            } else {
-                timer += maxProcessTime;
-                programQueues.enqueue(currentP);
-            }
-        }
     }
 
+    public static boolean linearSearch(int[] numbers, int n, int target) {
+        int[] a = numbers.clone();
+        a[n] = target;
+        int i = 0;
+        while (a[i] != target) {
+            i++;
+        }
+        return i != n;
+    }
 
+    public static boolean binarySearch(int[] numbers, int target) {
+        int lo = 0;
+        int hi = numbers.length - 1;
+
+        while (lo <= hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (numbers[mid] == target) {
+                return true;
+            } else if (numbers[mid] < target) {
+                lo = mid + 1;
+
+            } else {
+                hi = mid - 1;
+            }
+        }
+        return false;
+    }
 }
